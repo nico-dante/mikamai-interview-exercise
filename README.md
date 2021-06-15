@@ -69,6 +69,8 @@ $ docker-compose -f docker-compose.yml up -d
 $ docker exec -it mikamai-interview-exercise_services_1 typeorm migration:run
 ```
 
+then open [https://localhost/api](https://localhost/api) to test APIs
+
 ## Run
 
 ```bash
