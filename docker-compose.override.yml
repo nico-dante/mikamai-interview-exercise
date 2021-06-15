@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  mysql:
+    ports:
+      - 3306:3306
+
+  services:
+    volumes:
+      - ${PROJECT_ROOT}/services/src:/usr/src/app/src
+      - ${PROJECT_ROOT}/services/test:/usr/src/app/test
+      - ${PROJECT_ROOT}/services/tsconfig.build.json:/usr/src/app/tsconfig.build.json
+      - ${PROJECT_ROOT}/services/tsconfig.json:/usr/src/app/tsconfig.json
+      - ${PROJECT_ROOT}/services/nest-cli.json:/usr/src/app/nest-cli.json
+    logging:
+      driver: json-file
+    ports:
+      - "3000:3000"
+    command: bash -c "npm install && npm run start:debug"

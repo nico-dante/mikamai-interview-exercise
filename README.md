@@ -30,6 +30,7 @@ The attributes of our application entities are:
   - category: Category
 
 - Product
+
   - Name: string
   - Price: number
   - category: Category
@@ -65,7 +66,7 @@ $ mv .env-dist .env
 $ docker-compose -f docker-compose.yml up -d
 
 # run migrations to create database and populate it
-$ docker exec -it mikamai-interview-exercise_backend_1 typeorm migration:run
+$ docker exec -it mikamai-interview-exercise_services_1 typeorm migration:run
 ```
 
 ## Run
@@ -76,13 +77,6 @@ $ docker-compose up
 
 # production
 $ docker-compose -f docker-compose.yml up -d
-```
-
-## Migrations
-
-```bash
-# run migrations
-$ docker exec -it mikamai-interview-exercise_backend_1 typeorm migration:run
 ```
 
 ## Author

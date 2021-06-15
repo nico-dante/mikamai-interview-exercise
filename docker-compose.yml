@@ -1,0 +1,55 @@
+version: "3"
+
+services:
+  mysql:
+    image: mysql:latest
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
+    networks:
+      - network
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - mysqldb:/var/lib/mysql:delegated
+
+  services:
+    build:
+      context: services
+    restart: unless-stopped
+    logging:
+      driver: journald
+    networks:
+      - network
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: 3000
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_MIGRATION_TABEL_NAME: ${MYSQL_MIGRATION_TABEL_NAME}
+    depends_on:
+      - mysql
+
+  proxy:
+    build:
+      context: proxy
+    networks:
+      - network
+    ports:
+      - 80:80
+      - 443:443
+    restart: unless-stopped
+    depends_on:
+      - mysql
+      - services
+
+networks:
+  network:
+
+volumes:
+  mysqldb:
