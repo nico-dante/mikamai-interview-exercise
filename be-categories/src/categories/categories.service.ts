@@ -15,16 +15,14 @@ export class CategoriesService {
   }
 
   async find(search?: string): Promise<Array<Category>> {
-    const findConditions: FindConditions<Category> = {
-      deletedAt: IsNull(),
-    };
-
-    if (search && search.length > 0) {
-      findConditions.name = ILike(`%${search}%`);
-    }
-
     return this.categoriesRepository.find({
-      where: findConditions,
+      where: this.findConditions(search),
+    });
+  }
+
+  async count(search?: string): Promise<number> {
+    return this.categoriesRepository.count({
+      where: this.findConditions(search),
     });
   }
 
@@ -80,18 +78,23 @@ export class CategoriesService {
       where: { id: id },
     });
 
-    //if (
-    //  (category.posts && category.posts.length > 0) ||
-    //  (category.posts && category.posts.length > 0)
-    //) {
-    //  throw new Error('');
-    //}
-
     if (soft) {
       category.deletedAt = new Date();
       return this.categoriesRepository.save(category);
     }
 
     return this.categoriesRepository.remove(category);
+  }
+
+  private findConditions(search?: string): FindConditions<Category> {
+    const findConditions: FindConditions<Category> = {
+      deletedAt: IsNull(),
+    };
+
+    if (search && search.length > 0) {
+      findConditions.name = ILike(`%${search}%`);
+    }
+
+    return findConditions;
   }
 }

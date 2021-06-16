@@ -11,10 +11,10 @@ PRODUCT1.price = 3.5;
 
 export const PRODUCTS: Array<Product> = [PRODUCT1];
 
-const mockCategoriesRepository = new Repository<Product>();
+const mockProductsRepository = new Repository<Product>();
 
 jest
-  .spyOn(mockCategoriesRepository, 'find')
+  .spyOn(mockProductsRepository, 'find')
   .mockImplementation(async (conditions?: FindConditions<Product>) =>
     !conditions || !conditions.name
       ? PRODUCTS
@@ -27,12 +27,12 @@ jest
   );
 
 jest
-  .spyOn(mockCategoriesRepository, 'findOne')
+  .spyOn(mockProductsRepository, 'findOne')
   .mockImplementation(async (conditions?: FindConditions<Product>) =>
     PRODUCTS.find((c) => c.id === conditions['id']),
   );
 
-export const categoriesRepositoryMock = {
+export const productsRepositoryMock = {
   provide: getRepositoryToken(Product),
-  useValue: mockCategoriesRepository,
+  useValue: mockProductsRepository,
 };

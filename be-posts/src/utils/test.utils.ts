@@ -20,10 +20,10 @@ POST2.body =
 
 export const POSTS: Array<Post> = [POST1, POST2];
 
-const mockCategoriesRepository = new Repository<Post>();
+const mockPostsRepository = new Repository<Post>();
 
 jest
-  .spyOn(mockCategoriesRepository, 'find')
+  .spyOn(mockPostsRepository, 'find')
   .mockImplementation(async (conditions?: FindConditions<Post>) =>
     !conditions || !conditions.title
       ? POSTS
@@ -36,12 +36,12 @@ jest
   );
 
 jest
-  .spyOn(mockCategoriesRepository, 'findOne')
+  .spyOn(mockPostsRepository, 'findOne')
   .mockImplementation(async (conditions?: FindConditions<Post>) =>
     POSTS.find((c) => c.id === conditions['id']),
   );
 
-export const categoriesRepositoryMock = {
+export const postsRepositoryMock = {
   provide: getRepositoryToken(Post),
-  useValue: mockCategoriesRepository,
+  useValue: mockPostsRepository,
 };

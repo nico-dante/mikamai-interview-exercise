@@ -15,9 +15,9 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Mikamai Interview Exercise Services"', () => {
+    it('should return "Mikamai Interview Exercise - Categories microservice"', () => {
       expect(appController.getProjectName()).toBe(
-        'Mikamai Interview Exercise Services',
+        'Mikamai Interview Exercise - Categories microservice',
       );
     });
   });

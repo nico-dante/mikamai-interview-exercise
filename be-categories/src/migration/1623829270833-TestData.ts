@@ -1,4 +1,4 @@
-import { isProduction } from 'src/utils/common.utils';
+import { isProduction } from '../utils/common.utils';
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class TestData1623829270833 implements MigrationInterface {
