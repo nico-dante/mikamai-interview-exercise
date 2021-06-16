@@ -1,7 +1,7 @@
 {
-  "name": "mikamai-interview-exercise-services",
+  "name": "mie-be-posts",
   "version": "0.0.1",
-  "description": "Mikamai interview exercise services",
+  "description": "Mikamai interview exercise - Posts microservice",
   "author": "",
   "private": true,
   "license": "MIT",
@@ -27,6 +27,7 @@
     "@nestjs/platform-express": "^7.5.1",
     "@nestjs/swagger": "^4.8.0",
     "@nestjs/typeorm": "^7.1.5",
+    "class-validator": "^0.13.1",
     "mysql2": "^2.2.5",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",

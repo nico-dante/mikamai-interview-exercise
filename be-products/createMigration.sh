@@ -19,11 +19,11 @@ if [ -z "$2" ]; then
 fi
 
 export MYSQL_HOST="localhost"
-export MYSQL_PORT="3306"
-export MYSQL_DATABASE="mikamai-interview-exercise"
+export MYSQL_PORT="33306"
+export MYSQL_DATABASE="mie-products"
 export MYSQL_HOST="localhost"
-export MYSQL_USER="mikamai-interview-exercise"
-export MYSQL_PASSWORD="pwd-mikamai-interview-exercise"
+export MYSQL_USER="mie-products"
+export MYSQL_PASSWORD="pwd-mie-products"
 export MYSQL_MIGRATION_TABEL_NAME="typeorm_migration"
 
 echo "typeorm migration:$COMAND -n $MIGRATION_NAME"
