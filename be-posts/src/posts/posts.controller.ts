@@ -89,7 +89,7 @@ export class PostsController {
     let post = await this.postsService.get(id);
 
     if (!post) {
-      throw new NotFoundException(`category with id ${id} not found`);
+      throw new NotFoundException(`post with id ${id} not found`);
     }
 
     if (
@@ -119,7 +119,7 @@ export class PostsController {
     let post = await this.postsService.get(id);
 
     if (!post) {
-      throw new NotFoundException(`category with id ${id} not found`);
+      throw new NotFoundException(`post with id ${id} not found`);
     }
 
     post = await this.postsService.delete(

@@ -1,14 +1,35 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { AppModule } from './../src/app.module';
+import { MieLoggerModule } from '../src/utils/logging.utils';
+import { ProductsController } from '../src/products/products.controller';
+import { ProductsService } from '../src/products/products.service';
+import { CategoriesService } from '../src/categories/categories.service';
+import {
+  CATEGORIES,
+  mockCategoriesService,
+  mockProductsService,
+  PRODUCTS,
+} from '../src/utils/test.utils';
+import { ProductDto } from '../src/products/products.dto';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
+  const productDtoList: Array<ProductDto> = PRODUCTS.map((p) =>
+    ProductDto.fromEntity(
+      p,
+      CATEGORIES.find((c) => c.id === p.categoryId).name,
+    ),
+  );
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [MieLoggerModule],
+      controllers: [ProductsController],
+      providers: [
+        { provide: ProductsService, useFactory: mockProductsService },
+        { provide: CategoriesService, useFactory: mockCategoriesService },
+      ],
     }).compile();
 
     app = moduleFixture.createNestApplication();
@@ -17,8 +38,8 @@ describe('AppController (e2e)', () => {
 
   it('/ (GET)', () => {
     return request(app.getHttpServer())
-      .get('/')
+      .get('/products')
       .expect(200)
-      .expect('Hello World!');
+      .expect(JSON.stringify(productDtoList));
   });
 });

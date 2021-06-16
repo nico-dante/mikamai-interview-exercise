@@ -31,16 +31,36 @@ export class CategoriesController {
 
   @Get()
   @ApiQuery({ name: 'q', required: false })
-  async find(@Query('q') search?: string) {
-    const categories = await this.categoriesService.find(search);
+  @ApiQuery({ name: 'id', required: false })
+  async find(
+    @Query('q') search?: string,
+    @Query('id') id?: string | Array<string>,
+  ) {
+    const ids: Array<string> = id ? (typeof id === 'string' ? [id] : id) : null;
+
+    if (ids && ids.length === 0) {
+      return [];
+    }
+
+    const categories = await this.categoriesService.find(search, ids);
 
     return (categories || []).map((c) => CategoryDto.fromEntity(c, 0, 0));
   }
 
   @Get('count')
   @ApiQuery({ name: 'q', required: false })
-  async count(@Query('q') search?: string) {
-    return this.categoriesService.count(search);
+  @ApiQuery({ name: 'id', required: false })
+  async count(
+    @Query('q') search?: string,
+    @Query('id') id?: string | Array<string>,
+  ) {
+    const ids: Array<string> = id ? (typeof id === 'string' ? [id] : id) : null;
+
+    if (ids && ids.length === 0) {
+      return [];
+    }
+
+    return this.categoriesService.count(search, ids);
   }
 
   @Post()

@@ -45,6 +45,7 @@ export class ProductsService {
     }
 
     let product = new Product();
+    product.createdAt = new Date();
     product.name = name;
     product.price = price;
     product.categoryId = categoryId;
@@ -82,6 +83,7 @@ export class ProductsService {
     }
 
     let product = await this.productsRepository.findOneOrFail(id);
+    product.updatedAt = new Date();
     product.name = name;
     product.price = price;
     product.categoryId = categoryId;

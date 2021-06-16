@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindConditions, ILike, IsNull, Not, Repository } from 'typeorm';
+import { FindConditions, ILike, In, IsNull, Not, Repository } from 'typeorm';
 import { MieLogger } from '../utils/logging.utils';
 import { Category } from './category.entity';
 
@@ -14,15 +14,15 @@ export class CategoriesService {
     logger.setContext(CategoriesService.name);
   }
 
-  async find(search?: string): Promise<Array<Category>> {
+  async find(search?: string, ids?: Array<string>): Promise<Array<Category>> {
     return this.categoriesRepository.find({
-      where: this.findConditions(search),
+      where: this.findConditions(search, ids),
     });
   }
 
-  async count(search?: string): Promise<number> {
+  async count(search?: string, ids?: Array<string>): Promise<number> {
     return this.categoriesRepository.count({
-      where: this.findConditions(search),
+      where: this.findConditions(search, ids),
     });
   }
 
@@ -86,13 +86,20 @@ export class CategoriesService {
     return this.categoriesRepository.remove(category);
   }
 
-  private findConditions(search?: string): FindConditions<Category> {
+  private findConditions(
+    search?: string,
+    ids?: Array<string>,
+  ): FindConditions<Category> {
     const findConditions: FindConditions<Category> = {
       deletedAt: IsNull(),
     };
 
     if (search && search.length > 0) {
       findConditions.name = ILike(`%${search}%`);
+    }
+
+    if (ids) {
+      findConditions.id = In(ids);
     }
 
     return findConditions;

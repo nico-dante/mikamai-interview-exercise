@@ -11,6 +11,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { ApiQuery } from '@nestjs/swagger';
+import { CategoriesService } from '../categories/categories.service';
 import { MieLogger } from '../utils/logging.utils';
 import { AddProductDto, ProductDto, UpdateProductDto } from './products.dto';
 import { ProductsService } from './products.service';
@@ -20,6 +21,7 @@ export class ProductsController {
   constructor(
     private logger: MieLogger,
     private productsService: ProductsService,
+    private categoriesService: CategoriesService,
   ) {
     logger.setContext(ProductsController.name);
   }
@@ -37,9 +39,18 @@ export class ProductsController {
         : categoryId
       : null;
 
-    const posts = await this.productsService.find(search, categoryIds);
+    const products = await this.productsService.find(search, categoryIds);
 
-    return (posts || []).map((p) => ProductDto.fromEntity(p, null));
+    const categories = await this.categoriesService.list(
+      products.map((p) => p.categoryId),
+    );
+
+    return (products || []).map((p) =>
+      ProductDto.fromEntity(
+        p,
+        categories.find((c) => c.id === p.categoryId).name,
+      ),
+    );
   }
 
   @Get('count')
@@ -71,28 +82,41 @@ export class ProductsController {
       throw new BadRequestException('missing mandatory parameters');
     }
 
-    const post = await this.productsService.add(
+    const category = await this.categoriesService.get(dto.categoryId);
+    if (!category) {
+      throw new NotFoundException(
+        `category with id ${dto.categoryId} not found`,
+      );
+    }
+
+    const product = await this.productsService.add(
       dto.name,
       dto.price,
       dto.categoryId,
     );
 
-    return ProductDto.fromEntity(post, null);
+    return ProductDto.fromEntity(product, category.name);
   }
 
   @Get(':id')
   async get(@Param('id') id: string) {
-    const post = await this.productsService.get(id);
+    const product = await this.productsService.get(id);
 
-    return ProductDto.fromEntity(post, null);
+    if (product) {
+      const category = await this.categoriesService.get(product.categoryId);
+
+      return ProductDto.fromEntity(product, category.name);
+    }
+
+    return null;
   }
 
   @Put(':id')
   async update(@Param('id') id: string, @Body() dto: UpdateProductDto) {
-    let post = await this.productsService.get(id);
+    let product = await this.productsService.get(id);
 
-    if (!post) {
-      throw new NotFoundException(`category with id ${id} not found`);
+    if (!product) {
+      throw new NotFoundException(`product with id ${id} not found`);
     }
 
     if (
@@ -106,30 +130,37 @@ export class ProductsController {
       throw new BadRequestException('missing mandatory parameters');
     }
 
-    post = await this.productsService.update(
+    const category = await this.categoriesService.get(dto.categoryId);
+    if (!category) {
+      throw new NotFoundException(
+        `category with id ${dto.categoryId} not found`,
+      );
+    }
+
+    product = await this.productsService.update(
       id,
       dto.name,
       dto.price,
       dto.categoryId,
     );
 
-    return ProductDto.fromEntity(post, null);
+    return ProductDto.fromEntity(product, category.name);
   }
 
   @Delete(':id')
   @ApiQuery({ name: 'soft', enum: ['true', 'false'], required: false })
   async delete(@Param('id') id: string, @Query('soft') soft?: string) {
-    let post = await this.productsService.get(id);
+    let product = await this.productsService.get(id);
 
-    if (!post) {
-      throw new NotFoundException(`category with id ${id} not found`);
+    if (!product) {
+      throw new NotFoundException(`product with id ${id} not found`);
     }
 
-    post = await this.productsService.delete(
+    product = await this.productsService.delete(
       id,
       soft && soft.toLowerCase() === 'true',
     );
 
-    return ProductDto.fromEntity(post, null);
+    return ProductDto.fromEntity(product, null);
   }
 }
