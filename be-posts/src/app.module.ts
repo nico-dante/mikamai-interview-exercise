@@ -4,9 +4,15 @@ import { AppService } from './app.service';
 import { MieLoggerModule } from './utils/logging.utils';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PostsModule } from './posts/posts.module';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(), MieLoggerModule, PostsModule],
+  imports: [
+    TypeOrmModule.forRoot(),
+    MieLoggerModule,
+    PostsModule,
+    CategoriesModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -37,9 +37,11 @@ export class CategoriesController {
   @Get()
   @ApiQuery({ name: 'q', required: false })
   @ApiQuery({ name: 'id', required: false })
+  @ApiQuery({ name: 'ignoreReference', type: 'boolean', required: false })
   async find(
     @Query('q') search?: string,
     @Query('id') id?: string | Array<string>,
+    @Query('ignoreReference') ignoreReference?: boolean | string,
   ) {
     const ids: Array<string> = id ? (typeof id === 'string' ? [id] : id) : null;
 
@@ -51,8 +53,18 @@ export class CategoriesController {
 
     const categoryIds = categories.map((c) => c.id);
 
-    const postsCountMap = await this.postsService.countList(categoryIds);
-    const productsCountMap = await this.productsService.countList(categoryIds);
+    const ir =
+      !!ignoreReference &&
+      (typeof ignoreReference === 'string'
+        ? ignoreReference.toLowerCase() === 'true' || ignoreReference === '1'
+        : ignoreReference);
+
+    const postsCountMap = ir
+      ? {}
+      : await this.postsService.countList(categoryIds);
+    const productsCountMap = ir
+      ? {}
+      : await this.productsService.countList(categoryIds);
 
     return (categories || []).map((c) =>
       CategoryDto.fromEntity(c, postsCountMap[c.id], productsCountMap[c.id]),

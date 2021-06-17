@@ -16,7 +16,10 @@ import { CategoriesService } from '../src/categories/categories.service';
 describe('AppController (e2e)', () => {
   let app: INestApplication;
   const postDtoList: Array<PostDto> = POSTS.map((p) =>
-    PostDto.fromEntity(p, CATEGORIES.find((c) => c.id === p.categoryId).name),
+    PostDto.fromEntity(
+      p,
+      CATEGORIES.find((c) => c.id === p.categoryId),
+    ),
   );
 
   beforeEach(async () => {

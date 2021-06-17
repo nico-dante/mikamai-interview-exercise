@@ -45,7 +45,7 @@ export class PostsService {
       ).data;
 
       posts.forEach((p) => {
-        catIdPostCountMap[p.categoryId]++;
+        catIdPostCountMap[p.category.id]++;
       });
     }
 

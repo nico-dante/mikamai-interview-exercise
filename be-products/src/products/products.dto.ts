@@ -1,4 +1,5 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
+import { CategoryDto } from '../categories/categories.dto';
 import { Product } from './product.entity';
 
 export class UpdateProductDto {
@@ -18,9 +19,9 @@ export class ProductDto {
   id: string;
   name: string;
   price: number;
-  category: string;
+  category: CategoryDto;
 
-  static fromEntity(entity: Product, categoryName: string) {
+  static fromEntity(entity: Product, category: CategoryDto) {
     if (!entity) {
       return null;
     }
@@ -29,7 +30,7 @@ export class ProductDto {
     dto.id = entity.id;
     dto.name = entity.name;
     dto.price = entity.price;
-    dto.category = categoryName;
+    dto.category = category;
 
     return dto;
   }

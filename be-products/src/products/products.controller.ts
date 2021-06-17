@@ -48,7 +48,7 @@ export class ProductsController {
     return (products || []).map((p) =>
       ProductDto.fromEntity(
         p,
-        categories.find((c) => c.id === p.categoryId).name,
+        categories.find((c) => c.id === p.categoryId),
       ),
     );
   }
@@ -95,7 +95,7 @@ export class ProductsController {
       dto.categoryId,
     );
 
-    return ProductDto.fromEntity(product, category.name);
+    return ProductDto.fromEntity(product, category);
   }
 
   @Get(':id')
@@ -105,7 +105,7 @@ export class ProductsController {
     if (product) {
       const category = await this.categoriesService.get(product.categoryId);
 
-      return ProductDto.fromEntity(product, category.name);
+      return ProductDto.fromEntity(product, category);
     }
 
     return null;
@@ -144,7 +144,7 @@ export class ProductsController {
       dto.categoryId,
     );
 
-    return ProductDto.fromEntity(product, category.name);
+    return ProductDto.fromEntity(product, category);
   }
 
   @Delete(':id')

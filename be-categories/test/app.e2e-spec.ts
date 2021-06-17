@@ -21,8 +21,8 @@ describe('AppController (e2e)', () => {
   const categoryDtoList: Array<CategoryDto> = CATEGORIES.map((c) =>
     CategoryDto.fromEntity(
       c,
-      POSTS.filter((p) => p.categoryId === c.id).length,
-      PRODUCTS.filter((p) => p.categoryId === c.id).length,
+      POSTS.filter((p) => p.category.id === c.id).length,
+      PRODUCTS.filter((p) => p.category.id === c.id).length,
     ),
   );
 

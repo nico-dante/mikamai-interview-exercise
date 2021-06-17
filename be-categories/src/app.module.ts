@@ -8,7 +8,13 @@ import { PostsModule } from './posts/posts.module';
 import { ProductsModule } from './products/products.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(), MieLoggerModule, CategoriesModule, PostsModule, ProductsModule],
+  imports: [
+    TypeOrmModule.forRoot(),
+    MieLoggerModule,
+    CategoriesModule,
+    PostsModule,
+    ProductsModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

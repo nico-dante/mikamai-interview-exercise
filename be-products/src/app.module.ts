@@ -7,7 +7,12 @@ import { ProductsModule } from './products/products.module';
 import { CategoriesModule } from './categories/categories.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(), MieLoggerModule, ProductsModule, CategoriesModule],
+  imports: [
+    TypeOrmModule.forRoot(),
+    MieLoggerModule,
+    ProductsModule,
+    CategoriesModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

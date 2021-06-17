@@ -5,6 +5,7 @@ import { MieLogger } from './logging.utils';
 import { CategoriesService } from '../categories/categories.service';
 import { ProductsService } from '../products/products.service';
 import { PostsService } from '../posts/posts.service';
+import { CategoryDto } from '../categories/categories.dto';
 
 export const CATEGORY1 = new Category();
 CATEGORY1.id = 'category-1';
@@ -31,14 +32,14 @@ POST1.id = 'post-1';
 POST1.title = 'post one';
 POST1.body =
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas molestie lacus quam, sit amet volutpat eros eleifend nec. Cras a erat non mauris porta accumsan in quis nisi. Donec orci nisl, condimentum non fermentum ut, accumsan et dui. Vivamus viverra laoreet risus et viverra. Praesent fermentum pretium tristique. Nulla fringilla ultrices ipsum, a sollicitudin nisl. Suspendisse hendrerit dui sem, non auctor justo ullamcorper non. Suspendisse vel turpis mi. Vivamus nec urna justo. Donec in erat metus.';
-POST1.categoryId = CATEGORY1.id;
+POST1.category = CategoryDto.fromEntity(CATEGORY1, 0, 0);
 
 export const POST2 = new PostDto();
 POST2.id = 'post-2';
 POST2.title = 'post two';
 POST2.body =
   'Nullam pellentesque molestie convallis. Ut scelerisque libero at porta sagittis. Nulla ac tortor sed urna lobortis ullamcorper. Sed cursus arcu eget urna ultrices dictum. Mauris mattis quam nisi, sit amet elementum enim posuere eget. Morbi faucibus fermentum tristique. Donec elementum mauris vel sodales lobortis. Integer non dolor in ipsum volutpat dictum sit amet sit amet quam. Quisque ultricies magna nec nulla tempus porta. Morbi vehicula, felis consectetur consequat sagittis, velit dolor pellentesque quam, ac dapibus quam sapien vitae dui. Cras vitae sollicitudin lacus, a mattis turpis. Etiam nec nisl tincidunt nulla dapibus molestie eget eu leo. Ut eu ipsum a est malesuada mollis. Nulla consequat quam quis arcu faucibus, vel efficitur elit gravida.';
-POST2.categoryId = CATEGORY2.id;
+POST2.category = CategoryDto.fromEntity(CATEGORY2, 0, 0);
 
 export const POSTS: Array<PostDto> = [POST1, POST2];
 
@@ -46,7 +47,7 @@ export const PRODUCT1 = new ProductDto();
 PRODUCT1.id = 'product-1';
 PRODUCT1.name = 'product one';
 PRODUCT1.price = 3.5;
-PRODUCT1.categoryId = CATEGORY1.id;
+PRODUCT1.category = CategoryDto.fromEntity(CATEGORY1, 0, 0);
 
 export const PRODUCTS: Array<ProductDto> = [PRODUCT1];
 
@@ -59,7 +60,7 @@ export const mockProductsService = (): ProductsService => {
     .spyOn(productsService, 'count')
     .mockImplementation(
       async (categoryIds?: Array<string>): Promise<number> =>
-        PRODUCTS.filter((p) => categoryIds.indexOf(p.categoryId) >= 0).length,
+        PRODUCTS.filter((p) => categoryIds.indexOf(p.category.id) >= 0).length,
     );
 
   jest
@@ -76,7 +77,7 @@ export const mockProductsService = (): ProductsService => {
           });
 
           PRODUCTS.forEach((p) => {
-            catIdProductCountMap[p.categoryId]++;
+            catIdProductCountMap[p.category.id]++;
           });
         }
 
@@ -94,7 +95,7 @@ export const mockPostsService = (): PostsService => {
     .spyOn(postsService, 'count')
     .mockImplementation(
       async (categoryIds?: Array<string>): Promise<number> =>
-        POSTS.filter((p) => categoryIds.indexOf(p.categoryId) >= 0).length,
+        POSTS.filter((p) => categoryIds.indexOf(p.category.id) >= 0).length,
     );
 
   jest
@@ -111,7 +112,7 @@ export const mockPostsService = (): PostsService => {
           });
 
           POSTS.forEach((p) => {
-            catIdPostCountMap[p.categoryId]++;
+            catIdPostCountMap[p.category.id]++;
           });
         }
 

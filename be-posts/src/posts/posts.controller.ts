@@ -46,7 +46,10 @@ export class PostsController {
     );
 
     return (posts || []).map((p) =>
-      PostDto.fromEntity(p, categories.find((c) => c.id === p.categoryId).name),
+      PostDto.fromEntity(
+        p,
+        categories.find((c) => c.id === p.categoryId),
+      ),
     );
   }
 
@@ -92,7 +95,7 @@ export class PostsController {
       dto.categoryId,
     );
 
-    return PostDto.fromEntity(post, category.name);
+    return PostDto.fromEntity(post, category);
   }
 
   @Get(':id')
@@ -102,7 +105,7 @@ export class PostsController {
     if (post) {
       const category = await this.categoriesService.get(post.categoryId);
 
-      return PostDto.fromEntity(post, category.name);
+      return PostDto.fromEntity(post, category);
     }
 
     return null;
@@ -141,7 +144,7 @@ export class PostsController {
       dto.categoryId,
     );
 
-    return PostDto.fromEntity(post, category.name);
+    return PostDto.fromEntity(post, category);
   }
 
   @Delete(':id')

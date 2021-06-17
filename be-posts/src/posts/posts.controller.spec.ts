@@ -16,7 +16,10 @@ import { PostDto } from './posts.dto';
 describe('PostsController', () => {
   let controller: PostsController;
   const postDtoList: Array<PostDto> = POSTS.map((p) =>
-    PostDto.fromEntity(p, CATEGORIES.find((c) => c.id === p.categoryId).name),
+    PostDto.fromEntity(
+      p,
+      CATEGORIES.find((c) => c.id === p.categoryId),
+    ),
   );
 
   beforeEach(async () => {

@@ -45,7 +45,7 @@ export class ProductsService {
       ).data;
 
       posts.forEach((p) => {
-        catIdPostCountMap[p.categoryId]++;
+        catIdPostCountMap[p.category.id]++;
       });
     }
 

@@ -19,7 +19,7 @@ describe('ProductsController', () => {
   const productDtoList: Array<ProductDto> = PRODUCTS.map((p) =>
     ProductDto.fromEntity(
       p,
-      CATEGORIES.find((c) => c.id === p.categoryId).name,
+      CATEGORIES.find((c) => c.id === p.categoryId),
     ),
   );
 

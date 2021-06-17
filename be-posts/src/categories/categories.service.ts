@@ -15,12 +15,14 @@ export class CategoriesService {
 
     let idList = '';
     ids.forEach((id) => {
-      idList += (idList.length === 0 ? '?id=' : '&id=') + id;
+      idList += '&id=' + id;
     });
 
     return (
       await this.httpService
-        .get<Array<CategoryDto>>(CATEGORIES_URL + `${idList}`)
+        .get<Array<CategoryDto>>(
+          CATEGORIES_URL + `?ignoreReference=true${idList}`,
+        )
         .toPromise()
     ).data;
   }
