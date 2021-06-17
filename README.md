@@ -1,4 +1,4 @@
-# Mikanai Interview Exercise
+# Mikamai Interview Exercise
 
 ## Instructions
 
