@@ -1,0 +1,55 @@
+version: "3"
+
+services:
+  # Databases
+  db-categories:
+    ports:
+      - 13306:3306
+
+  db-posts:
+    ports:
+      - 23306:3306
+
+  db-products:
+    ports:
+      - 33306:3306
+
+  # Backend Services
+  be-categories:
+    volumes:
+      - ${PROJECT_ROOT}/be-categories/src:/usr/src/app/src
+      - ${PROJECT_ROOT}/be-categories/test:/usr/src/app/test
+      - ${PROJECT_ROOT}/be-categories/tsconfig.build.json:/usr/src/app/tsconfig.build.json
+      - ${PROJECT_ROOT}/be-categories/tsconfig.json:/usr/src/app/tsconfig.json
+      - ${PROJECT_ROOT}/be-categories/nest-cli.json:/usr/src/app/nest-cli.json
+    logging:
+      driver: json-file
+    ports:
+      - 3001:3000
+    command: bash -c "npm install && npm run start:debug"
+
+  be-posts:
+    volumes:
+      - ${PROJECT_ROOT}/be-posts/src:/usr/src/app/src
+      - ${PROJECT_ROOT}/be-posts/test:/usr/src/app/test
+      - ${PROJECT_ROOT}/be-posts/tsconfig.build.json:/usr/src/app/tsconfig.build.json
+      - ${PROJECT_ROOT}/be-posts/tsconfig.json:/usr/src/app/tsconfig.json
+      - ${PROJECT_ROOT}/be-posts/nest-cli.json:/usr/src/app/nest-cli.json
+    logging:
+      driver: json-file
+    ports:
+      - 3002:3000
+    command: bash -c "npm install && npm run start:debug"
+
+  be-products:
+    volumes:
+      - ${PROJECT_ROOT}/be-products/src:/usr/src/app/src
+      - ${PROJECT_ROOT}/be-products/test:/usr/src/app/test
+      - ${PROJECT_ROOT}/be-products/tsconfig.build.json:/usr/src/app/tsconfig.build.json
+      - ${PROJECT_ROOT}/be-products/tsconfig.json:/usr/src/app/tsconfig.json
+      - ${PROJECT_ROOT}/be-products/nest-cli.json:/usr/src/app/nest-cli.json
+    logging:
+      driver: json-file
+    ports:
+      - 3003:3000
+    command: bash -c "npm install && npm run start:debug"

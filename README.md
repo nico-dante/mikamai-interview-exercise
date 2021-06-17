@@ -1,4 +1,4 @@
-# Mikanai Interview Exercise
+# Mikamai Interview Exercise
 
 ## Instructions
 
@@ -30,6 +30,7 @@ The attributes of our application entities are:
   - category: Category
 
 - Product
+
   - Name: string
   - Price: number
   - category: Category
@@ -64,8 +65,10 @@ $ mv .env-dist .env
 # execute docker
 $ docker-compose -f docker-compose.yml up -d
 
-# run migrations to create database and populate it
-$ docker exec -it mikamai-interview-exercise_backend_1 typeorm migration:run
+# run migrations to create databases and populate them
+$ docker exec -it mikamai-interview-exercise_be-categories_1 typeorm migration:run
+$ docker exec -it mikamai-interview-exercise_be-posts_1 typeorm migration:run
+$ docker exec -it mikamai-interview-exercise_be-products_1 typeorm migration:run
 ```
 
 ## Run
@@ -76,13 +79,6 @@ $ docker-compose up
 
 # production
 $ docker-compose -f docker-compose.yml up -d
-```
-
-## Migrations
-
-```bash
-# run migrations
-$ docker exec -it mikamai-interview-exercise_backend_1 typeorm migration:run
 ```
 
 ## Author

@@ -1,0 +1,137 @@
+version: "3"
+
+services:
+  # Databases
+  db-categories:
+    image: mysql:latest
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
+    networks:
+      - network
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_CATEGORIES_DATABASE}
+      MYSQL_USER: ${MYSQL_CATEGORIES_USER}
+      MYSQL_PASSWORD: ${MYSQL_CATEGORIES_PASSWORD}
+    volumes:
+      - mysqldb-categories:/var/lib/mysql:delegated
+
+  db-posts:
+    image: mysql:latest
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
+    networks:
+      - network
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_POSTS_DATABASE}
+      MYSQL_USER: ${MYSQL_POSTS_USER}
+      MYSQL_PASSWORD: ${MYSQL_POSTS_PASSWORD}
+    volumes:
+      - mysqldb-posts:/var/lib/mysql:delegated
+
+  db-products:
+    image: mysql:latest
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
+    networks:
+      - network
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_PRODUCTS_DATABASE}
+      MYSQL_USER: ${MYSQL_PRODUCTS_USER}
+      MYSQL_PASSWORD: ${MYSQL_PRODUCTS_PASSWORD}
+    volumes:
+      - mysqldb-products:/var/lib/mysql:delegated
+
+  # Backend Microservices
+  be-categories:
+    build:
+      context: be-categories
+    restart: unless-stopped
+    logging:
+      driver: journald
+    networks:
+      - network
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: 3000
+      MYSQL_HOST: db-categories
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: ${MYSQL_CATEGORIES_DATABASE}
+      MYSQL_USER: ${MYSQL_CATEGORIES_USER}
+      MYSQL_PASSWORD: ${MYSQL_CATEGORIES_PASSWORD}
+      MYSQL_MIGRATION_TABEL_NAME: ${MYSQL_MIGRATION_TABEL_NAME}
+      POSTS_HOST: be-posts
+      POSTS_PORT: 3000
+      PRODUCTS_HOST: be-products
+      PRODUCTS_PORT: 3000
+    depends_on:
+      - db-categories
+
+  be-posts:
+    build:
+      context: be-posts
+    restart: unless-stopped
+    logging:
+      driver: journald
+    networks:
+      - network
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: 3000
+      MYSQL_HOST: db-posts
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: ${MYSQL_POSTS_DATABASE}
+      MYSQL_USER: ${MYSQL_POSTS_USER}
+      MYSQL_PASSWORD: ${MYSQL_POSTS_PASSWORD}
+      MYSQL_MIGRATION_TABEL_NAME: ${MYSQL_MIGRATION_TABEL_NAME}
+      CATEGORIES_HOST: be-categories
+      CATEGORIES_PORT: 3000
+    depends_on:
+      - db-posts
+
+  be-products:
+    build:
+      context: be-products
+    restart: unless-stopped
+    logging:
+      driver: journald
+    networks:
+      - network
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: 3000
+      MYSQL_HOST: db-products
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: ${MYSQL_PRODUCTS_DATABASE}
+      MYSQL_USER: ${MYSQL_PRODUCTS_USER}
+      MYSQL_PASSWORD: ${MYSQL_PRODUCTS_PASSWORD}
+      MYSQL_MIGRATION_TABEL_NAME: ${MYSQL_MIGRATION_TABEL_NAME}
+      CATEGORIES_HOST: be-categories
+      CATEGORIES_PORT: 3000
+    depends_on:
+      - db-products
+
+  # Proxy
+  proxy:
+    build:
+      context: proxy
+    networks:
+      - network
+    ports:
+      - 80:80
+      - 443:443
+    restart: unless-stopped
+    depends_on:
+      - be-categories
+      - be-posts
+      - be-products
+
+networks:
+  network:
+
+volumes:
+  mysqldb-categories:
+  mysqldb-posts:
+  mysqldb-products:

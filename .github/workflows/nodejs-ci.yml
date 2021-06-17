@@ -1,0 +1,77 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test-categories:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x, 14.x, 16.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm ci
+        working-directory: ./be-categories
+      - run: npm run build --if-present
+        working-directory: ./be-categories
+      - run: npm test
+        working-directory: ./be-categories
+      - run: npm run test:e2e
+        working-directory: ./be-categories
+
+  build-and-test-posts:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x, 14.x, 16.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm ci
+        working-directory: ./be-posts
+      - run: npm run build --if-present
+        working-directory: ./be-posts
+      - run: npm test
+        working-directory: ./be-posts
+      - run: npm run test:e2e
+        working-directory: ./be-posts
+
+  build-and-test-products:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x, 14.x, 16.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm ci
+        working-directory: ./be-products
+      - run: npm run build --if-present
+        working-directory: ./be-products
+      - run: npm test
+        working-directory: ./be-products
+      - run: npm run test:e2e
+        working-directory: ./be-products
