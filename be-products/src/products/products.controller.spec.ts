@@ -87,4 +87,19 @@ describe('ProductsController', () => {
 
     expect(await controller.get(product.id)).toBeNull();
   });
+
+  it('should get error', async () => {
+    let error: Error;
+    try {
+      await controller.add({
+        name: 'test product one',
+        price: 42,
+        categoryId: 'non-existent category id',
+      });
+    } catch (err) {
+      error = err;
+    }
+
+    expect(error).toBeDefined();
+  });
 });

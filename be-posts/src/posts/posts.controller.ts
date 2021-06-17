@@ -11,13 +11,18 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { ApiQuery } from '@nestjs/swagger';
+import { CategoriesService } from '../categories/categories.service';
 import { MieLogger } from '../utils/logging.utils';
 import { AddPostDto, PostDto, UpdatePostDto } from './posts.dto';
 import { PostsService } from './posts.service';
 
 @Controller('posts')
 export class PostsController {
-  constructor(private logger: MieLogger, private postsService: PostsService) {
+  constructor(
+    private logger: MieLogger,
+    private postsService: PostsService,
+    private categoriesService: CategoriesService,
+  ) {
     logger.setContext(PostsController.name);
   }
 
@@ -36,7 +41,13 @@ export class PostsController {
 
     const posts = await this.postsService.find(search, categoryIds);
 
-    return (posts || []).map((p) => PostDto.fromEntity(p, null));
+    const categories = await this.categoriesService.list(
+      posts.map((p) => p.categoryId),
+    );
+
+    return (posts || []).map((p) =>
+      PostDto.fromEntity(p, categories.find((c) => c.id === p.categoryId).name),
+    );
   }
 
   @Get('count')
@@ -68,20 +79,33 @@ export class PostsController {
       throw new BadRequestException('missing mandatory parameters');
     }
 
+    const category = await this.categoriesService.get(dto.categoryId);
+    if (!category) {
+      throw new NotFoundException(
+        `category with id ${dto.categoryId} not found`,
+      );
+    }
+
     const post = await this.postsService.add(
       dto.title,
       dto.body,
       dto.categoryId,
     );
 
-    return PostDto.fromEntity(post, null);
+    return PostDto.fromEntity(post, category.name);
   }
 
   @Get(':id')
   async get(@Param('id') id: string) {
     const post = await this.postsService.get(id);
 
-    return PostDto.fromEntity(post, null);
+    if (post) {
+      const category = await this.categoriesService.get(post.categoryId);
+
+      return PostDto.fromEntity(post, category.name);
+    }
+
+    return null;
   }
 
   @Put(':id')
@@ -103,6 +127,13 @@ export class PostsController {
       throw new BadRequestException('missing mandatory parameters');
     }
 
+    const category = await this.categoriesService.get(dto.categoryId);
+    if (!category) {
+      throw new NotFoundException(
+        `category with id ${dto.categoryId} not found`,
+      );
+    }
+
     post = await this.postsService.update(
       id,
       dto.title,
@@ -110,7 +141,7 @@ export class PostsController {
       dto.categoryId,
     );
 
-    return PostDto.fromEntity(post, null);
+    return PostDto.fromEntity(post, category.name);
   }
 
   @Delete(':id')

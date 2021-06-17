@@ -1,6 +1,4 @@
 import { Product } from '../products/product.entity';
-import { FindConditions, Repository } from 'typeorm';
-import { getRepositoryToken } from '@nestjs/typeorm';
 import { CategoryDto } from '../categories/categories.dto';
 import { CategoriesService } from '../categories/categories.service';
 import { MieLogger } from './logging.utils';
@@ -29,32 +27,6 @@ PRODUCT1.price = 3.5;
 PRODUCT1.categoryId = CATEGORY1.id;
 
 export let PRODUCTS: Array<Product> = [PRODUCT1];
-
-const mockProductsRepository = new Repository<Product>();
-
-jest
-  .spyOn(mockProductsRepository, 'find')
-  .mockImplementation(async (conditions?: FindConditions<Product>) =>
-    !conditions || !conditions.name
-      ? PRODUCTS
-      : PRODUCTS.filter(
-          (c) =>
-            c.name
-              .toLowerCase()
-              .indexOf(conditions.name.toString().toLowerCase()) >= 0,
-        ),
-  );
-
-jest
-  .spyOn(mockProductsRepository, 'findOne')
-  .mockImplementation(async (conditions?: FindConditions<Product>) =>
-    PRODUCTS.find((c) => c.id === conditions['id']),
-  );
-
-export const productsRepositoryMock = {
-  provide: getRepositoryToken(Product),
-  useValue: mockProductsRepository,
-};
 
 export const mockLogger = (): MieLogger => new MieLogger(null);
 
