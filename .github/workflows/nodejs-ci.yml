@@ -10,9 +10,6 @@ jobs:
   build-and-test-categories:
     runs-on: ubuntu-latest
 
-    env:
-      working-directory: ./be-categories
-
     strategy:
       matrix:
         node-version: [12.x, 14.x, 16.x]
@@ -25,6 +22,10 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm ci
+        working-directory: ./be-categories
       - run: npm run build --if-present
+        working-directory: ./be-categories
       - run: npm test
+        working-directory: ./be-categories
       - run: npm run test:e2e
+        working-directory: ./be-categories
