@@ -132,7 +132,7 @@ export const mockPostsService = (): PostsService => {
   jest
     .spyOn(postsService, 'get')
     .mockImplementation(
-      async (id: string): Promise<Post> => POSTS.find((c) => c.id === id),
+      async (id: string): Promise<Post> => POSTS.find((p) => p.id === id),
     );
 
   jest

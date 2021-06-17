@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Body,
+  ConflictException,
   Controller,
   Delete,
   Get,
@@ -11,6 +12,8 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import { PostsService } from '../posts/posts.service';
+import { ProductsService } from '../products/products.service';
 import { MieLogger } from '../utils/logging.utils';
 import {
   AddCategoryDto,
@@ -25,6 +28,8 @@ export class CategoriesController {
   constructor(
     private logger: MieLogger,
     private categoriesService: CategoriesService,
+    private postsService: PostsService,
+    private productsService: ProductsService,
   ) {
     logger.setContext(CategoriesController.name);
   }
@@ -44,7 +49,14 @@ export class CategoriesController {
 
     const categories = await this.categoriesService.find(search, ids);
 
-    return (categories || []).map((c) => CategoryDto.fromEntity(c, 0, 0));
+    const categoryIds = categories.map((c) => c.id);
+
+    const postsCountMap = await this.postsService.countList(categoryIds);
+    const productsCountMap = await this.productsService.countList(categoryIds);
+
+    return (categories || []).map((c) =>
+      CategoryDto.fromEntity(c, postsCountMap[c.id], productsCountMap[c.id]),
+    );
   }
 
   @Get('count')
@@ -71,14 +83,24 @@ export class CategoriesController {
 
     const category = await this.categoriesService.add(dto.name);
 
-    return CategoryDto.fromEntity(category, 0, 0);
+    return CategoryDto.fromEntity(
+      category,
+      await this.postsService.count([category.id]),
+      await this.productsService.count([category.id]),
+    );
   }
 
   @Get(':id')
   async get(@Param('id') id: string) {
     const category = await this.categoriesService.get(id);
 
-    return CategoryDto.fromEntity(category, 0, 0);
+    return category
+      ? CategoryDto.fromEntity(
+          category,
+          await this.postsService.count([category.id]),
+          await this.productsService.count([category.id]),
+        )
+      : null;
   }
 
   @Put(':id')
@@ -95,7 +117,11 @@ export class CategoriesController {
 
     category = await this.categoriesService.update(id, dto.name);
 
-    return CategoryDto.fromEntity(category, 0, 0);
+    return CategoryDto.fromEntity(
+      category,
+      await this.postsService.count([category.id]),
+      await this.productsService.count([category.id]),
+    );
   }
 
   @Delete(':id')
@@ -105,6 +131,15 @@ export class CategoriesController {
 
     if (!category) {
       throw new NotFoundException(`category with id ${id} not found`);
+    }
+
+    const postsCount = await this.postsService.count([category.id]);
+    const productsCount = await this.productsService.count([category.id]);
+
+    if (postsCount + productsCount > 0) {
+      throw new ConflictException(
+        `there are ${postsCount} posts and ${productsCount} prodcuts referenced by category with id ${category.id}`,
+      );
     }
 
     category = await this.categoriesService.delete(
