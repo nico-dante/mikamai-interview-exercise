@@ -1,10 +1,8 @@
 name: Docker Compose CI
 
 on:
-  push:
-    branches: [main, develop]
   pull_request:
-    branches: [main]
+    branches: [main, develop]
 
 jobs:
   test-docker-containers:
@@ -15,6 +13,8 @@ jobs:
         run: cat .env-dist | sed s/NODE_ENV=production/NODE_ENV=staging/ > .env
       - name: Build the stack
         run: docker-compose -f docker-compose.yml up -d
+      - name: Wait 60 seconds
+        run: sleep 60s
       - name: Run categories migrations
         run: docker exec mikamai-interview-exercise_be-categories_1 typeorm migration:run
       - name: Run posts migrations
