@@ -1,0 +1,29 @@
+name: Docker Compose CI
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  test-docker-containers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Create .env file
+        run: cat .env-dist | sed s/NODE_ENV=production/NODE_ENV=staging/ > .env
+      - name: Build the stack
+        run: docker-compose -f docker-compose.yml up -d
+      - name: Wait 60 seconds
+        run: sleep 60s
+      - name: Run categories migrations
+        run: docker exec mikamai-interview-exercise_be-categories_1 typeorm migration:run
+      - name: Run posts migrations
+        run: docker exec mikamai-interview-exercise_be-posts_1 typeorm migration:run
+      - name: Run products migrations
+        run: docker exec mikamai-interview-exercise_be-products_1 typeorm migration:run
+      - name: Test categories
+        run: "curl -X GET --insecure -L http://localhost/categories -H 'cache-control: no-cache'"
+      - name: Test posts
+        run: "curl -X GET --insecure -L http://localhost/posts -H 'cache-control: no-cache'"
+      - name: Test products
+        run: "curl -X GET --insecure -L http://localhost/products -H 'cache-control: no-cache'"
