@@ -86,17 +86,14 @@ describe('PostsController', () => {
   });
 
   it('should get error', async () => {
-    let error: Error;
-    try {
-      await controller.add({
+    expect(
+      controller.add({
         title: 'test post one',
         body: 'body of post one',
         categoryId: 'non-existent category id',
-      });
-    } catch (err) {
-      error = err;
-    }
-
-    expect(error).toBeDefined();
+      }),
+    ).rejects.toThrowError(
+      `category with id non-existent category id not found`,
+    );
   });
 });

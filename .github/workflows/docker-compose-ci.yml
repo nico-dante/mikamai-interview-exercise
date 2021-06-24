@@ -16,11 +16,11 @@ jobs:
       - name: Wait 60 seconds
         run: sleep 60s
       - name: Run categories migrations
-        run: docker exec mikamai-interview-exercise_be-categories_1 typeorm migration:run
+        run: docker-compose exec be-categories typeorm migration:run
       - name: Run posts migrations
-        run: docker exec mikamai-interview-exercise_be-posts_1 typeorm migration:run
+        run: docker-compose exec be-posts typeorm migration:run
       - name: Run products migrations
-        run: docker exec mikamai-interview-exercise_be-products_1 typeorm migration:run
+        run: docker-compose exec be-products typeorm migration:run
       - name: Test categories
         run: "curl -X GET --insecure -L http://localhost/categories -H 'cache-control: no-cache'"
       - name: Test posts

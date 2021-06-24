@@ -99,13 +99,8 @@ describe('CategoriesController', () => {
   });
 
   it('should get error', async () => {
-    let error: Error;
-    try {
-      await controller.delete(CATEGORY1.id);
-    } catch (err) {
-      error = err;
-    }
-
-    expect(error).toBeDefined();
+    expect(controller.delete(CATEGORY1.id)).rejects.toThrowError(
+      `prodcuts referenced by category with id ${CATEGORY1.id}`,
+    );
   });
 });

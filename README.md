@@ -66,9 +66,9 @@ $ mv .env-dist .env
 $ docker-compose -f docker-compose.yml up -d
 
 # run migrations to create databases and populate them
-$ docker exec -it mikamai-interview-exercise_be-categories_1 typeorm migration:run
-$ docker exec -it mikamai-interview-exercise_be-posts_1 typeorm migration:run
-$ docker exec -it mikamai-interview-exercise_be-products_1 typeorm migration:run
+$ docker-compose exec be-categories typeorm migration:run
+$ docker-compose exec be-posts typeorm migration:run
+$ docker-compose exec be-products typeorm migration:run
 ```
 
 ## Run
