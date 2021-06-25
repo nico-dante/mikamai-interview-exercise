@@ -7,24 +7,14 @@ import { CategoriesService } from '../src/categories/categories.service';
 import { PostsService } from '../src/posts/posts.service';
 import { ProductsService } from '../src/products/products.service';
 import {
-  CATEGORIES,
+  CATEGORY_DTOS,
   mockCategoriesService,
   mockPostsService,
   mockProductsService,
-  POSTS,
-  PRODUCTS,
 } from '../src/utils/test.utils';
-import { CategoryDto } from '../src/categories/categories.dto';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
-  const categoryDtoList: Array<CategoryDto> = CATEGORIES.map((c) =>
-    CategoryDto.fromEntity(
-      c,
-      POSTS.filter((p) => p.category.id === c.id).length,
-      PRODUCTS.filter((p) => p.category.id === c.id).length,
-    ),
-  );
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -45,6 +35,13 @@ describe('AppController (e2e)', () => {
     return request(app.getHttpServer())
       .get('/categories')
       .expect(200)
-      .expect(JSON.stringify(categoryDtoList));
+      .expect(JSON.stringify(CATEGORY_DTOS));
+  });
+
+  it('/:id/ (GET)', () => {
+    return request(app.getHttpServer())
+      .get(`/categories/${CATEGORY_DTOS[0].id}/`)
+      .expect(200)
+      .expect(JSON.stringify(CATEGORY_DTOS[0]));
   });
 });

@@ -4,26 +4,17 @@ import { ProductsService } from '../products/products.service';
 import {
   CATEGORIES,
   CATEGORY1,
+  CATEGORY_DTOS,
   mockCategoriesService,
   mockPostsService,
   mockProductsService,
-  POSTS,
-  PRODUCTS,
 } from '../utils/test.utils';
 import { MieLoggerModule } from '../utils/logging.utils';
 import { CategoriesController } from './categories.controller';
 import { CategoriesService } from './categories.service';
-import { CategoryDto } from './categories.dto';
 
 describe('CategoriesController', () => {
   let controller: CategoriesController;
-  const categoryDtoList: Array<CategoryDto> = CATEGORIES.map((c) =>
-    CategoryDto.fromEntity(
-      c,
-      POSTS.filter((p) => p.category.id === c.id).length,
-      PRODUCTS.filter((p) => p.category.id === c.id).length,
-    ),
-  );
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -44,10 +35,10 @@ describe('CategoriesController', () => {
   });
 
   it('should find categories', async () => {
-    expect(await controller.find()).toEqual(categoryDtoList);
+    expect(await controller.find()).toEqual(CATEGORY_DTOS);
 
-    expect(await controller.find(categoryDtoList[0].name)).toEqual([
-      categoryDtoList[0],
+    expect(await controller.find(CATEGORY_DTOS[0].name)).toEqual([
+      CATEGORY_DTOS[0],
     ]);
 
     expect(await controller.count(null, CATEGORY1.id)).toEqual(1);
@@ -59,9 +50,7 @@ describe('CategoriesController', () => {
       ),
     ).toEqual(CATEGORIES.length);
 
-    expect(await controller.get(categoryDtoList[0].id)).toEqual(
-      categoryDtoList[0],
-    );
+    expect(await controller.get(CATEGORY_DTOS[0].id)).toEqual(CATEGORY_DTOS[0]);
   });
 
   it('should not find categories', async () => {
@@ -73,7 +62,7 @@ describe('CategoriesController', () => {
   });
 
   it('should works as a CRUD', async () => {
-    expect(await controller.count()).toEqual(categoryDtoList.length);
+    expect(await controller.count()).toEqual(CATEGORY_DTOS.length);
 
     let category = await controller.add({
       name: 'test category one',
@@ -81,7 +70,7 @@ describe('CategoriesController', () => {
 
     expect(category).toBeDefined();
 
-    expect(await controller.count()).toEqual(categoryDtoList.length + 1);
+    expect(await controller.count()).toEqual(CATEGORY_DTOS.length + 1);
 
     expect(await controller.get(category.id)).toEqual(category);
 
@@ -93,7 +82,7 @@ describe('CategoriesController', () => {
 
     await controller.delete(category.id);
 
-    expect(await controller.count()).toEqual(categoryDtoList.length);
+    expect(await controller.count()).toEqual(CATEGORY_DTOS.length);
 
     expect(await controller.get(category.id)).toBeNull();
   });

@@ -51,6 +51,14 @@ PRODUCT1.category = CategoryDto.fromEntity(CATEGORY1, 0, 0);
 
 export const PRODUCTS: Array<ProductDto> = [PRODUCT1];
 
+export const CATEGORY_DTOS: Array<CategoryDto> = CATEGORIES.map((c) =>
+  CategoryDto.fromEntity(
+    c,
+    POSTS.filter((p) => p.category.id === c.id).length,
+    PRODUCTS.filter((p) => p.category.id === c.id).length,
+  ),
+);
+
 export const mockLogger = (): MieLogger => new MieLogger(null);
 
 export const mockProductsService = (): ProductsService => {
